@@ -1,16 +1,17 @@
 from pathlib import Path
+
 import pandas as pd
 import joblib
 from setfit import SetFitModel
 
-# app/ directory (same level as app.py, data.xlsx, models/)
+# Points to: /mount/src/helixsense_nlp_app/app
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data.xlsx"
 MODELS_DIR = BASE_DIR / "models"
 
+
 def load_tfidf_vectorizer():
     path = MODELS_DIR / "vectorizer.pkl"
-    print("DEBUG vectorizer path:", path, path.exists())
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF vectorizer not found at {path}")
     return joblib.load(path)
