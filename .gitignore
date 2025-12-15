@@ -1,0 +1,68 @@
+# --- Python basics (from official template) ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Packaging / build
+.build/
+dist/
+build/
+.eggs/
+*.egg-info/
+*.egg
+wheels/
+*.whl
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test / coverage
+.pytest_cache/
+.tox/
+.nox/
+.coverage*
+htmlcov/
+
+# Type checkers / linters
+.mypy_cache/
+.pytype/
+.ruff_cache/
+
+# IDE / editor
+.idea/
+.vscode/
+.spyproject/
+.ropeproject/
+
+# --- Project‑specific for this app ---
+
+# Streamlit local state & secrets
+.streamlit/secrets.toml
+.streamlit/*.yaml
+.streamlit/*.json
+
+# Cached data & models (if you serialize them)
+models/
+checkpoints/
+cache/
+*.pkl
+*.joblib
+*.bin
+
+# Uploaded / temporary files
+tmp/
+temp/
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
