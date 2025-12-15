@@ -24,3 +24,4 @@ python-dotenv
 
 # Keras compatibility (IMPORTANT)
 tf-keras
+pinecone-client
