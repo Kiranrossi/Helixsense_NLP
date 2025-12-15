@@ -25,3 +25,5 @@ python-dotenv
 # Keras compatibility (IMPORTANT)
 tf-keras
 pinecone-client==3.2.2
+groq
+
