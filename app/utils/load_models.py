@@ -3,22 +3,28 @@ import pandas as pd
 import joblib
 from setfit import SetFitModel
 
-# app/ directory (where app.py, data.xlsx, models/ live)
+# app/ directory (same level as app.py, data.xlsx, models/)
 BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data.xlsx"
 MODELS_DIR = BASE_DIR / "models"
 
 def load_tfidf_vectorizer():
-    path = MODELS_DIR / "vectorizer.pkl"     # matches GitHub
+    path = MODELS_DIR / "vectorizer.pkl"
+    print("DEBUG vectorizer path:", path, path.exists())
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF vectorizer not found at {path}")
     return joblib.load(path)
 
 def load_tfidf_model():
-    path = MODELS_DIR / "tfidf_logreg.pkl"   # matches GitHub
+    path = MODELS_DIR / "tfidf_logreg.pkl"
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF model not found at {path}")
     return joblib.load(path)
+
+def load_dataset():
+    if not DATA_PATH.exists():
+        raise FileNotFoundError(f"Dataset not found at {DATA_PATH}")
+    return pd.read_excel(DATA_PATH)
 
 def load_setfit_model():
     path = MODELS_DIR / "setfit_model"
