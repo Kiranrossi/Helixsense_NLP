@@ -20,18 +20,15 @@ def load_dataset() -> pd.DataFrame:
 
 
 def load_tfidf_vectorizer():
-    """Load saved TF-IDF vectorizer."""
-    path = MODELS_DIR / "vectorizer.pkl"
+    path = MODELS_DIR / "vectorizer.pkl"   # your file
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF vectorizer not found at {path}")
     return joblib.load(path)
 
-
 def load_tfidf_model():
-    """Load saved Logistic Regression baseline model."""
-    path = MODELS_DIR / "tfidf_logreg.pkl"
+    path = MODELS_DIR / "tfidf_logreg.pkl"  # your file
     if not path.exists():
-        raise FileNotFoundError(f"TF-IDF Logistic Regression model not found at {path}")
+        raise FileNotFoundError(f"TF-IDF model not found at {path}")
     return joblib.load(path)
 
 
