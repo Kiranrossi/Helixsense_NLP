@@ -1,44 +1,28 @@
 from pathlib import Path
-
 import pandas as pd
 import joblib
 from setfit import SetFitModel
 
-# Base directory = app/ (where app.py and data.xlsx live)
-BASE_DIR = Path(__file__).resolve().parent.parent  # utils -> app
+# app/ directory (where app.py, data.xlsx, models/ live)
+BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data.xlsx"
 MODELS_DIR = BASE_DIR / "models"
 
-
-
-def load_dataset() -> pd.DataFrame:
-    """Load the main dataset."""
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(f"data.xlsx not found at {DATA_PATH}")
-    df = pd.read_excel(DATA_PATH)
-    return df
-
-
 def load_tfidf_vectorizer():
-    path = MODELS_DIR / "vectorizer.pkl"   # your file
+    path = MODELS_DIR / "vectorizer.pkl"     # matches GitHub
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF vectorizer not found at {path}")
     return joblib.load(path)
 
 def load_tfidf_model():
-    path = MODELS_DIR / "tfidf_logreg.pkl"  # your file
+    path = MODELS_DIR / "tfidf_logreg.pkl"   # matches GitHub
     if not path.exists():
         raise FileNotFoundError(f"TF-IDF model not found at {path}")
     return joblib.load(path)
 
-
 def load_setfit_model():
-    """Load saved SetFit model from the setfit_model directory."""
     path = MODELS_DIR / "setfit_model"
-    if not path.exists():
-        raise FileNotFoundError(f"SetFit model directory not found at {path}")
-    model = SetFitModel.from_pretrained(str(path))
-    return model
+    return SetFitModel.from_pretrained(path)
 
 
 def _ensure_label_column(df: pd.DataFrame) -> pd.DataFrame:
