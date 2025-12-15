@@ -1,16 +1,14 @@
-# app/utils/load_models.py
-
-import os
-import pathlib
+from pathlib import Path
 
 import pandas as pd
 import joblib
 from setfit import SetFitModel
 
-# Resolve project root as the parent of the "app" folder
-PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[2]
-DATA_PATH = PROJECT_ROOT / "data.xlsx"
-MODELS_DIR = PROJECT_ROOT / "models"
+# Base directory = app/ (where app.py and data.xlsx live)
+BASE_DIR = Path(__file__).resolve().parent.parent  # utils -> app
+DATA_PATH = BASE_DIR / "data.xlsx"
+MODELS_DIR = BASE_DIR / "models"
+
 
 
 def load_dataset() -> pd.DataFrame:
