@@ -1,38 +1,26 @@
-import os
 from typing import List, Tuple
 
-from dotenv import load_dotenv
+import streamlit as st
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 from duckduckgo_search import DDGS
 
-load_dotenv()
-
-# --- Config from .env ---
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-if not PINECONE_API_KEY:
-    raise ValueError("PINECONE_API_KEY missing in .env")
-if not PINECONE_INDEX_NAME:
-    raise ValueError("PINECONE_INDEX_NAME missing in .env")
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY missing in .env")
+# --- Config from Streamlit secrets ---
+PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
+PINECONE_INDEX_NAME = st.secrets["PINECONE_INDEX_NAME"]
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
 # Use a stable Groq chat model
-GROQ_MODEL = "llama-3.1-8b-instant"  # update if Groq deprecates this
-
+GROQ_MODEL = "llama-3.1-8b-instant"
 
 # --- Global clients & models ---
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index(PINECONE_INDEX_NAME)
 
-# 384‑dim embeddings from all‑MiniLM‑L6‑v2
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
-
 groq_client = Groq(api_key=GROQ_API_KEY)
+
 
 
 # ---------- Helper functions ----------
