@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 import streamlit as st
-from pinecone import Pinecone
+from pinecone.grpc import Pinecone
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 from duckduckgo_search import DDGS
