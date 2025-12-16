@@ -52,12 +52,9 @@ htmlcov/
 .streamlit/*.json
 
 # Cached data & models (if you serialize them)
-models/
 checkpoints/
 cache/
-*.pkl
-*.joblib
-*.bin
+
 *.safetensors
 *.pth
 *.pt
