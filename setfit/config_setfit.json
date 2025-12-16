@@ -1,0 +1,8 @@
+{
+  "normalize_embeddings": false,
+  "labels": [
+    "Services",
+    "Equipment",
+    "Material"
+  ]
+}

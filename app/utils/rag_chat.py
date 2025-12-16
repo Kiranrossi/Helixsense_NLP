@@ -1,30 +1,40 @@
+import os
 from typing import List, Tuple
 
-import streamlit as st
-from pinecone import Pinecone, ServerlessSpec
+from dotenv import load_dotenv
+from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 from groq import Groq
 from duckduckgo_search import DDGS
+from duckduckgo_search.exceptions import RatelimitException
 
-# --- Config from Streamlit secrets ---
-PINECONE_API_KEY = st.secrets["PINECONE_API_KEY"]
-PINECONE_INDEX_NAME = st.secrets["PINECONE_INDEX_NAME"]
-GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+load_dotenv()
+
+# --- Config from .env ---
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_INDEX_NAME = os.getenv("PINECONE_INDEX_NAME")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if not PINECONE_API_KEY:
+    raise ValueError("PINECONE_API_KEY missing in .env")
+if not PINECONE_INDEX_NAME:
+    raise ValueError("PINECONE_INDEX_NAME missing in .env")
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY missing in .env")
 
 # Use a stable Groq chat model
-GROQ_MODEL = "llama-3.1-8b-instant"
+GROQ_MODEL = "llama-3.1-8b-instant"  # update if Groq deprecates this
 
 # --- Global clients & models ---
 pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index(PINECONE_INDEX_NAME)
 
+# 384‑dim embeddings from all‑MiniLM‑L6‑v2
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 groq_client = Groq(api_key=GROQ_API_KEY)
 
 
-
 # ---------- Helper functions ----------
-
 def _embed(text: str) -> List[float]:
     """Return a single 384‑dim embedding for the text."""
     return embedder.encode([text])[0].tolist()
@@ -42,17 +52,28 @@ def _search_pinecone(query: str, top_k: int = 4):
 
 
 def _web_search_snippet(query: str) -> str:
-    """Short DuckDuckGo snippet for general knowledge fallback."""
+    """
+    Short DuckDuckGo snippet for general knowledge fallback.
+
+    On any error (including rate‑limit), return "" so the chat still works.
+    """
     try:
         with DDGS() as ddgs:
             for r in ddgs.text(query, max_results=1):
                 return r.get("body", "")[:400]
-    except Exception:
+    except RatelimitException:
+        # Hit DuckDuckGo rate limit; skip web snippet gracefully
         return ""
-    return ""
+    except Exception:
+        # Any other network / parsing issue
+        return ""
 
 
-def _build_user_prompt(question: str, project_context: str, web_context: str = "") -> str:
+def _build_user_prompt(
+    question: str,
+    project_context: str,
+    web_context: str = "",
+) -> str:
     """Build the content of the user message sent to Groq."""
     parts = [f"User question: {question}"]
     if project_context:
@@ -68,7 +89,6 @@ def _build_user_prompt(question: str, project_context: str, web_context: str = "
 
 
 # ---------- Main entrypoint ----------
-
 def chat_ai(
     question: str,
     history: List[Tuple[str, str]],
@@ -80,12 +100,9 @@ def chat_ai(
     """
     General chatbot that is also aware of the Helixsense project.
 
-    Parameters
-    ----------
-    question : str
-        Latest user question.
-    history : list of (role, content)
-        Conversation history from Streamlit (role: 'user' or 'assistant').
+    The signature matches app.app.py, which calls this with keyword args:
+    question, history, df, tfidf_vec, tfidf_model, setfit_model.
+    Extra arguments are currently unused but kept for compatibility.
     """
     question = question.strip()
     if not question:
@@ -127,7 +144,7 @@ def chat_ai(
                 text = meta.get("text", "")
                 if text:
                     pieces.append(f"- [{meta.get('section', 'section')}] {text}")
-                scores.append(float(m.get("score", 0.0)))
+                    scores.append(float(m.get("score", 0.0)))
             project_ctx = "\n".join(pieces)
             avg_score = sum(scores) / len(scores) if scores else 0.0
             if avg_score < 0.65:
@@ -159,7 +176,6 @@ def chat_ai(
 
     # Build messages from history so the model sees prior turns
     messages = [{"role": "system", "content": system_msg}]
-
     for role, content in history:
         if role == "user":
             messages.append({"role": "user", "content": content})
