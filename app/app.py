@@ -19,7 +19,7 @@ from utils.report_generator import render_report_tab
 # Page configuration
 # --------------------------------------------------------------------
 st.set_page_config(
-    page_title="Helixsense – Facility Expense NLP",
+    page_title="Facility Expense NLP",
     layout="wide",
 )
 
@@ -60,7 +60,7 @@ if "setfit_metrics" not in st.session_state:
 # --------------------------------------------------------------------
 # Sidebar
 # --------------------------------------------------------------------
-st.sidebar.title("Helixsense NLP Demo")
+st.sidebar.title("NLP Demo")
 st.sidebar.markdown(
     "This internal demo showcases an end‑to‑end NLP pipeline that tags "
     "facility expense transactions into **Services**, **Equipment**, and "
